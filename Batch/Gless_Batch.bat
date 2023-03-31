@@ -13,14 +13,18 @@ date /t
 
 echo Computador: %computername%        Usuario: %username%
 
+Title Ferramenta de Suporte do Windows by @Glestman
                    
 echo            MENU TAREFAS
 echo  ==================================
 echo * 1. Otimizacao do Sistema            
-echo * 2. Encerramento mais rapido                                  
+echo * 2. Encerramento mais rapido                            
 echo * 3. Reset Spool Impressora           
 echo * 4. Renovar IP da máquina           
-echo * 5. Desinstalar atualizações do Windows Update           
+echo * 5. Desinstalar atualizações do Windows Update  
+echo * 6. Desativar Windows Update 
+echo * 7. Otimizacao Taxa de Transferência      
+       
 
 echo  ==================================
 
@@ -31,7 +35,8 @@ if %opcao% equ 2 goto opcao2
 if %opcao% equ 3 goto opcao3
 if %opcao% equ 4 goto opcao4
 if %opcao% equ 5 goto opcao5
-
+if %opcao% equ 6 goto opcao6
+if %opcao% equ 7 goto opcao7
 
 
 :opcao1
@@ -42,7 +47,10 @@ reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control" /v WaitToKillServi
 reg add "HKEY_CURRENT_USER\Control Panel\Desktop" /v HungAppTimeout /t REG_SZ /d 2000 /f
 reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem" /v ContigFileAllocSize /t REG_DWORD /d 200 /f
 reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Dfrg\BootOptimizeFunction" /v Enable /t REG_SZ /d y /f
+
+
 net stop SysMain
+sc config SysMain start=disabled >nul
 echo ==============================================
 echo * Otimização inicializacao realizada com sucesso *
 echo ==============================================
@@ -65,8 +73,6 @@ cls
 net stop Spooler
 del C:\Windows\System32\spool\PRINTERS /s /q
 net start Spooler
-
-
 
 echo ==================================
 echo *      Reiniciado Serviço de Impressão           *
@@ -94,7 +100,7 @@ net stop wuauserv >nul
 sc config wuauserv start=disabled >nul
 color 1E
 chcp 1252 >nul
-Title Desinstalar atualizações do Windows by @DuanyDias
+
 
 setlocal enabledelayedexpansion
 
@@ -119,6 +125,7 @@ for /f "skip=1 delims=KB " %%# in ('TYPE "%temp%\kbuplist.txt"') do (
 set /a wlines=!count!+13
 mode 70,%wlines%
 cls
+echo         Desinstalar atualizações do Windows by @DuanyDias
 echo.
 echo         ====================================================
 echo.
@@ -150,7 +157,7 @@ mode 70,5
 echo.
 echo.
 echo    Desinstalando Update KB%UninstOneKB%. . .
-wusa /uninstall /kb:%UninstOneKB% /quiet /norestart
+start /w "" wusa  /uninstall /kb:%UninstOneKB% /norestart
 timeout 3 >nul
 cls
 echo.
@@ -168,7 +175,7 @@ for /l %%x in (1,1,!count!) do (
   echo.
   echo.
   echo    Desinstalando Update KB!up_kb[%%x]!. . .
-  wusa /uninstall /kb:!up_kb[%%x]! /quiet /norestart
+  start /w "" wusa  /uninstall /kb:!up_kb[%%x]! /norestart
   timeout 3 >nul
 )
 cls
@@ -179,3 +186,27 @@ del /Q /F "%temp%\kbuplist.txt" >nul 2>&1
 timeout 3 >nul
 goto menu
 
+:opcao6
+cls
+net stop wuauserv >nul
+sc config wuauserv start=disabled >nul
+echo ==================================
+echo *      Removido Atualizacao automática do Windows Update        *
+echo ==================================
+pause
+goto menu
+
+
+:opcao7
+cls
+reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\usbstor\05DCA431" /v MaximumTransferLength /t REG_DWORD /d 2097120 /f
+reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\usbstor\054C00C1" /v MaximumTransferLength /t REG_DWORD /d 2097120 /f
+reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\usbstor\058F6362" /v MaximumTransferLength /t REG_DWORD /d 2097120 /f
+reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\usbstor\05AC12xx" /v MaximumTransferLength /t REG_DWORD /d 2097120 /f 
+reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\usbstor\05AC13xx" /v MaximumTransferLength /t REG_DWORD /d 2097120 /f 
+
+echo ==================================
+echo *     Otimizado W/R dos IOs        *
+echo ==================================
+pause
+goto menu
