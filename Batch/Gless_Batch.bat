@@ -1,6 +1,6 @@
 @echo off
 chcp 1252 >nul
-
+setlocal enabledelayedexpansion
 set "params=%*"
 cd /d "%~dp0" && ( if exist "%temp%\getadmin.vbs" del "%temp%\getadmin.vbs" ) && fsutil dirty query %systemdrive% 1>nul 2>nul || (  echo Set UAC = CreateObject^("Shell.Application"^) : UAC.ShellExecute "cmd.exe", "/k cd ""%~sdp0"" && %~s0 %params%", "", "runas", 1 >> "%temp%\getadmin.vbs" && "%temp%\getadmin.vbs" && exit /B )
 cls
@@ -9,6 +9,7 @@ cls
 mode 70,15
 color A
 
+for %%i in (C D E F G H I J K L M N O P Q R S T U V W X Y Z) do if exist %%i:\Scripts\GlessBooster\Batch\Tools set GUIPPEPath=%%i:\Scripts\GlessBooster\Batch\Tools
 date /t
 
 echo Computador: %computername%        Usuario: %username%
@@ -24,6 +25,8 @@ echo * 4. Renovar IP da máquina
 echo * 5. Desinstalar atualizações do Windows Update  
 echo * 6. Desativar Windows Update 
 echo * 7. Otimizacao Taxa de Transferência      
+echo * 8. Modo  Desempenho Maximo Plano de Energia 
+echo * 9. Limpar Arquivos Temporários
        
 
 echo  ==================================
@@ -37,6 +40,8 @@ if %opcao% equ 4 goto opcao4
 if %opcao% equ 5 goto opcao5
 if %opcao% equ 6 goto opcao6
 if %opcao% equ 7 goto opcao7
+if %opcao% equ 8 goto opcao8
+if %opcao% equ 9 goto opcao9
 
 
 :opcao1
@@ -59,7 +64,7 @@ goto menu
 
 :opcao2
 cls
-regedit /s "D:\Scripts\REG_BOOSTER_Update.reg
+regedit /s "%GUIPPEPath%\REG_BOOSTER_Update.reg"
 echo ==================================
 echo *      SpeedBooster realizado com sucesso         *
 echo ==================================
@@ -100,9 +105,6 @@ net stop wuauserv >nul
 sc config wuauserv start=disabled >nul
 color 1E
 chcp 1252 >nul
-
-
-setlocal enabledelayedexpansion
 
 :startgenlist
 cls
@@ -207,6 +209,38 @@ reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\usbstor\05AC13xx" /
 
 echo ==================================
 echo *     Otimizado W/R dos IOs        *
+echo ==================================
+pause
+goto menu
+
+:opcao8
+cls
+mode 90,6
+for /f "tokens=1,2 delims=:()" %%i in ('powercfg -list ^| find "(Desempenho Máximo)"') do set GUIDPlan=%%j
+if "%GUIDPlan%"=="" goto ImportUPEnergy
+set GUIDPlan=%GUIDPlan: =%
+powercfg -setactive %GUIDPlan%
+goto SkipUPEnergy
+
+:ImportUPEnergy
+powercfg -import "%GUIPPEPath%\UltimatePerformance.pow"
+timeout 2 >nul
+for /f "tokens=1,2 delims=:()" %%i in ('powercfg -list ^| find "(Desempenho Máximo)"') do set NewGUIDPlan=%%j
+set NewGUIDPlan=%NewGUIDPlan: =%
+powercfg -setactive %NewGUIDPlan%
+
+:SkipUPEnergy
+echo ==================================
+echo *     Ativado Modo ALto Desempenho Bateria        *
+echo ==================================
+pause
+goto menu
+
+:opcao9
+cls
+del  %temp%  /f /s /q 
+echo ==================================
+echo *     Removido Arquivos Temporarios        *
 echo ==================================
 pause
 goto menu

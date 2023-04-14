@@ -1,0 +1,25 @@
+Windows Registry Editor Version 5.00
+
+; Created by: GlestmanTech
+; http://www.glestmantech.com
+
+; REG_BOOSTER editado por @DuanyDias
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem]
+"ContigFileAllocSize"=dword:200
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\ServiceProvider]
+"Class"=dword:1
+"DnsPriority"=dword:7
+"HostsPriority"=dword:6
+"LocalPriority"=dword:5
+"NetbtPriority"=dword:8
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management\PrefetchParameters]
+"EnablePrefetcher"=dword:00000005
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer]
+"AlwaysUnloadDII"=dword:1
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem]
+"LongPathsEnabled"=dword:1
