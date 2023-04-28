@@ -45,7 +45,7 @@ Gless-Booster possui como requisito a execução como administrador.
 Inicializando a aplicação.
 
 ![2022-03-23 21_48_20-Configurações](https://user-images.githubusercontent.com/30185749/159822592-ac64ed5f-83d1-4aba-9537-d9f47ed956d4.png)
-
+![
 Selecione a opção desejada.
 
 ```sh
@@ -54,6 +54,10 @@ Selecione a opção desejada.
      3. Reset Spool Impressora           
      4. Renovar IP da máquina           
      5. Desinstalar atualizações do Windows Update
+     6. Desativar Windows Update
+     7. Otimizacao Taxa de Transferência
+     8. Modo  Desempenho Maximo Plano de Energia 
+     9. Limpar Arquivos Temporários
 
 ```
 
@@ -90,7 +94,31 @@ Selecione a opção desejada.
    ou todas atualizações do Windows de forma automática
   
 ```
+6. Desativar Windows Update
+```sh
+  Desativa a atualização do Windows Update
+  
+  
+```
+7. Otimizacao Taxa de Transferência  
+```sh
+   Realiza otimização para máxima taxa de transferência USB
+  
+  
+```
+8. Modo  Desempenho Maximo Plano de Energia 
+```sh
+Realiza importação e ativação de plano de energia Desempenho Máximo,aproveitando o máximo do desempenho da máquina
+  
+  
+```
+9. Limpar Arquivos Temporários
+```sh
+Realiza limpeza dos arquivos da pasta Temp
 
+  
+  
+```
 ## Requisitos
 Microsoft Windows 7 ou mais atual.
 
