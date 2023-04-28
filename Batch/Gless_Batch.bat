@@ -9,7 +9,7 @@ cls
 mode 70,15
 color A
 
-for %%i in (C D E F G H I J K L M N O P Q R S T U V W X Y Z) do if exist %%i:\Scripts\GlessBooster\Batch\Tools set GUIPPEPath=%%i:\Scripts\GlessBooster\Batch\Tools
+for %%i in (C D E F G H I J K L M N O P Q R S T U V W X Y Z) do if exist %%i:\Users\usuario\Desktop\Gless-Booster\Batch\Tools set GUIPPEPath=%%i:\Users\usuario\Desktop\Gless-Booster\Batch\Tools
 date /t
 
 echo Computador: %computername%        Usuario: %username%
