@@ -44,8 +44,10 @@ Gless-Booster possui como requisito a execução como administrador.
 
 Inicializando a aplicação.
 
-![2022-03-23 21_48_20-Configurações](https://user-images.githubusercontent.com/30185749/159822592-ac64ed5f-83d1-4aba-9537-d9f47ed956d4.png)
-![
+
+![xcxc](https://user-images.githubusercontent.com/30185749/235239217-c3936be8-11f9-44ca-b656-02647200c891.png)
+
+
 Selecione a opção desejada.
 
 ```sh
