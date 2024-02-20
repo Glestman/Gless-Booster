@@ -1,6 +1,7 @@
 @echo off
 chcp 1252 >nul
 setlocal enabledelayedexpansion
+set "arquivo=C:\Windows\system.ini"
 set "params=%*"
 cd /d "%~dp0" && ( if exist "%temp%\getadmin.vbs" del "%temp%\getadmin.vbs" ) && fsutil dirty query %systemdrive% 1>nul 2>nul || (  echo Set UAC = CreateObject^("Shell.Application"^) : UAC.ShellExecute "cmd.exe", "/k cd ""%~sdp0"" && %~s0 %params%", "", "runas", 1 >> "%temp%\getadmin.vbs" && "%temp%\getadmin.vbs" && exit /B )
 cls
@@ -21,12 +22,12 @@ echo  ==================================
 echo * 1. Otimizacao do Sistema            
 echo * 2. Encerramento mais rapido                            
 echo * 3. Reset Spool Impressora           
-echo * 4. Renovar IP da máquina           
-echo * 5. Desinstalar atualizações do Windows Update  
+echo * 4. Renovar IP da maquina           
+echo * 5. Desinstalar atualizacoes do Windows Update  
 echo * 6. Desativar Windows Update 
-echo * 7. Otimizacao Taxa de Transferência      
+echo * 7. Otimizacao Taxa de Transferencia      
 echo * 8. Modo  Desempenho Maximo Plano de Energia 
-echo * 9. Limpar Arquivos Temporários
+echo * 9. Limpar Arquivos Temporarios
        
 
 echo  ==================================
@@ -52,12 +53,63 @@ reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control" /v WaitToKillServi
 reg add "HKEY_CURRENT_USER\Control Panel\Desktop" /v HungAppTimeout /t REG_SZ /d 2000 /f
 reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem" /v ContigFileAllocSize /t REG_DWORD /d 200 /f
 reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Dfrg\BootOptimizeFunction" /v Enable /t REG_SZ /d y /f
+wmic os get OSArchitecture | findstr "64 bit" >nul && (
 
+    if "%errorlevel%" neq "0" (
+        echo O sistema e de 32 bits.
+        (
+             echo ; for 16-bit app support
+            echo [386Enh]
+            echo 32BitDiskAccess=on
+            echo 32BitFileAccess=on
+            echo DMABufferSize=64
+            echo MinSPs=16
+            echo PageBuffers=32
+            echo ConservativeSwapfileUsage=1
+            echo woafont=dosapp.fon
+            echo EGA80WOA.FON=EGA80WOA.FON
+            echo EGA40WOA.FON=EGA40WOA.FON
+            echo CGA80WOA.FON=CGA80WOA.FON
+            echo CGA40WOA.FON=CGA40WOA.FON
+            echo.
+            echo [drivers]
+            echo wave=mmdrv.dll
+            echo timer=timer.drv
+            echo.
+            echo [mci]
+        ) > "%arquivo%.tmp"
+        move /y "%arquivo%.tmp" "%arquivo%"
+    ) else (
+        echo O sistema e de 64 bits.
+        (
+            echo ; for 16-bit app support
+            echo [386Enh]
+            echo 64BitDiskAccess=on
+            echo 64BitFileAccess=on
+            echo DMABufferSize=128
+            echo MinSPs=16
+            echo PageBuffers=64
+            echo ConservativeSwapFileUsage=1
+            echo woafont=dosapp.fon
+            echo EGA80WOA.FON=EGA80WOA.FON
+            echo EGA40WOA.FON=EGA40WOA.FON
+            echo CGA80WOA.FON=CGA80WOA.FON
+            echo CGA40WOA.FON=CGA40WOA.FON
+            echo.
+            echo [drivers]
+            echo wave=mmdrv.dll
+            echo timer=timer.drv
+            echo.
+            echo [mci]
+        ) > "%arquivo%.tmp"
+        move /y "%arquivo%.tmp" "%arquivo%"
+    )
+)
 
 net stop SysMain
 sc config SysMain start=disabled >nul
 echo ==============================================
-echo * Otimização inicializacao realizada com sucesso *
+echo * Otimizacao inicializacao realizada com sucesso *
 echo ==============================================
 pause
 goto menu
@@ -80,7 +132,7 @@ del C:\Windows\System32\spool\PRINTERS /s /q
 net start Spooler
 
 echo ==================================
-echo *      Reiniciado Serviço de Impressão           *
+echo *      Reiniciado Servico de Impressao           *
 echo ==================================
 pause
 goto menu
@@ -92,7 +144,7 @@ ipconfig /flushdns
 ipconfig /renew
 ipconfig /registerdns
 echo ==================================
-echo *      Renovado o IP da máquina        *
+echo *      Renovado o IP da maquina        *
 echo ==================================
 pause
 goto menu
@@ -127,11 +179,11 @@ for /f "skip=1 delims=KB " %%# in ('TYPE "%temp%\kbuplist.txt"') do (
 set /a wlines=!count!+13
 mode 70,%wlines%
 cls
-echo         Desinstalar atualizações do Windows by @DuanyDias
+echo         Desinstalar atualizacoes do Windows by @DuanyDias
 echo.
 echo         ====================================================
 echo.
-echo         Escolha a atualização que deseja desinstalar. . .
+echo         Escolha a atualizacao que deseja desinstalar. . .
 echo.
 for /l %%x in (1,1,!count!) do (
   echo             [%%x]  Update KB!up_kb[%%x]!
@@ -141,17 +193,17 @@ echo             [A]  Desinstalar todos os updates acima.
 echo.
 echo         ====================================================
 echo.
-set /p sel_kb=^>       Digite a opção correspondente e pressione "enter": 
-if not defined sel_kb cls&echo.&echo   Foi pressionado "enter" sem digitar uma opção.&echo.&echo   Pressione qualquer tecla para tentar novamente. . .&pause >nul&goto startgenlist
+set /p sel_kb=^>       Digite a opcao correspondente e pressione "enter": 
+if not defined sel_kb cls&echo.&echo   Foi pressionado "enter" sem digitar uma opcao.&echo.&echo   Pressione qualquer tecla para tentar novamente. . .&pause >nul&goto startgenlist
 set "SelErrorKB="&for /f "delims=0123456789Aa" %%i in ("%sel_kb%") do set SelErrorKB=%%i
-if defined SelErrorKB cls&echo.&echo   Você digitou "%sel_kb%". Esse caractere é inválido.&echo.&echo   Pressione qualquer tecla para tentar novamente. . .&pause >nul&goto startgenlist
-if [%sel_kb%] equ [0] cls&echo.&echo   Você digitou "%sel_kb%". Olhe com mais atenção a lista de opções.&echo.&echo   Pressione qualquer tecla para tentar novamente. . .&pause >nul&goto startgenlist
-if [%sel_kb%] equ [Aa] cls&echo.&echo   Você digitou "%sel_kb%". Olhe com mais atenção a lista de opções.&echo.&echo   Pressione qualquer tecla para tentar novamente. . .&pause >nul&goto startgenlist
-if [%sel_kb%] equ [aA] cls&echo.&echo   Você digitou "%sel_kb%". Olhe com mais atenção a lista de opções.&echo.&echo   Pressione qualquer tecla para tentar novamente. . .&pause >nul&goto startgenlist
+if defined SelErrorKB cls&echo.&echo   Voce digitou "%sel_kb%". Esse caractere e invalido.&echo.&echo   Pressione qualquer tecla para tentar novamente. . .&pause >nul&goto startgenlist
+if [%sel_kb%] equ [0] cls&echo.&echo   Voce digitou "%sel_kb%". Olhe com mais atencao a lista de opcoes.&echo.&echo   Pressione qualquer tecla para tentar novamente. . .&pause >nul&goto startgenlist
+if [%sel_kb%] equ [Aa] cls&echo.&echo   Voce digitou "%sel_kb%". Olhe com mais atencao a lista de opcoes.&echo.&echo   Pressione qualquer tecla para tentar novamente. . .&pause >nul&goto startgenlist
+if [%sel_kb%] equ [aA] cls&echo.&echo   Voce digitou "%sel_kb%". Olhe com mais atencao a lista de opcoes.&echo.&echo   Pressione qualquer tecla para tentar novamente. . .&pause >nul&goto startgenlist
 if [%sel_kb%] equ [A] goto UninstAllKB
 if [%sel_kb%] equ [a] goto UninstAllKB
 if [%sel_kb%] Leq [!count!] set "UninstOneKB=!up_kb[%sel_kb%]!"&goto UninstOneKB
-if not [%sel_kb%] Leq [!count!] cls&echo.&echo   Você digitou "%sel_kb%". Olhe com mais atenção a lista de opções.&echo.&echo   Pressione qualquer tecla para tentar novamente. . .&pause >nul&goto startgenlist
+if not [%sel_kb%] Leq [!count!] cls&echo.&echo   Voce digitou "%sel_kb%". Olhe com mais atencao a lista de opcoes.&echo.&echo   Pressione qualquer tecla para tentar novamente. . .&pause >nul&goto startgenlist
 
 :UninstOneKB
 cls
@@ -164,7 +216,7 @@ timeout 3 >nul
 cls
 echo.
 echo.
-echo    A operação foi concluída com êxito.
+echo    A operacao foi concluida com exito.
 del /Q /F "%temp%\kbuplist.txt" >nul 2>&1
 timeout 3 >nul
 goto menu
@@ -183,7 +235,7 @@ for /l %%x in (1,1,!count!) do (
 cls
 echo.
 echo.
-echo    As operações foram concluídas com êxito.
+echo    As operacoes foram concluidas com exito.
 del /Q /F "%temp%\kbuplist.txt" >nul 2>&1
 timeout 3 >nul
 goto menu
@@ -193,7 +245,7 @@ cls
 net stop wuauserv >nul
 sc config wuauserv start=disabled >nul
 echo ==================================
-echo *      Removido Atualizacao automática do Windows Update        *
+echo *      Removido Atualizacao automatica do Windows Update        *
 echo ==================================
 pause
 goto menu
@@ -216,7 +268,7 @@ goto menu
 :opcao8
 cls
 mode 90,6
-for /f "tokens=1,2 delims=:()" %%i in ('powercfg -list ^| find "(Desempenho Máximo)"') do set GUIDPlan=%%j
+for /f "tokens=1,2 delims=:()" %%i in ('powercfg -list ^| find "(Desempenho Mï¿½ximo)"') do set GUIDPlan=%%j
 if "%GUIDPlan%"=="" goto ImportUPEnergy
 set GUIDPlan=%GUIDPlan: =%
 powercfg -setactive %GUIDPlan%
@@ -225,7 +277,7 @@ goto SkipUPEnergy
 :ImportUPEnergy
 powercfg -import "%GUIPPEPath%\UltimatePerformance.pow"
 timeout 2 >nul
-for /f "tokens=1,2 delims=:()" %%i in ('powercfg -list ^| find "(Desempenho Máximo)"') do set NewGUIDPlan=%%j
+for /f "tokens=1,2 delims=:()" %%i in ('powercfg -list ^| find "(Desempenho Mï¿½ximo)"') do set NewGUIDPlan=%%j
 set NewGUIDPlan=%NewGUIDPlan: =%
 powercfg -setactive %NewGUIDPlan%
 
