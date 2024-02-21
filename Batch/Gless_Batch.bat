@@ -1,24 +1,34 @@
 @echo off
-chcp 1252 >nul
-setlocal enabledelayedexpansion
+color A
+chcp 65001 >nul
+title Gless_Batch
+
+::set "params=%*"
+::cd /d "%~dp0" && ( if exist "%temp%\getadmin.vbs" del "%temp%\getadmin.vbs" ) && fsutil dirty query %systemdrive% 1>nul 2>nul || (  echo Set UAC = CreateObject^("Shell.Application"^) : UAC.ShellExecute "cmd.exe", "/k cd ""%~sdp0"" && %~s0 %params%", "", "runas", 1 >> "%temp%\getadmin.vbs" && "%temp%\getadmin.vbs" && exit /B )
+
+call :VerPrevAdmin
+if "%Admin%"=="ops" goto :eof
+
 set "arquivo=C:\Windows\system.ini"
-set "params=%*"
-cd /d "%~dp0" && ( if exist "%temp%\getadmin.vbs" del "%temp%\getadmin.vbs" ) && fsutil dirty query %systemdrive% 1>nul 2>nul || (  echo Set UAC = CreateObject^("Shell.Application"^) : UAC.ShellExecute "cmd.exe", "/k cd ""%~sdp0"" && %~s0 %params%", "", "runas", 1 >> "%temp%\getadmin.vbs" && "%temp%\getadmin.vbs" && exit /B )
-cls
+set "GUIPPEPath=%~dp0Tools"
+If Not Exist "%GUIPPEPath%" cls & echo. & echo. & echo     Execute o script junto à pasta "Tools". . .& timeout 5 >nul & Exit
+
+setlocal enabledelayedexpansion
+
 :menu
 cls
-mode 70,15
-color A
-
-for %%i in (C D E F G H I J K L M N O P Q R S T U V W X Y Z) do if exist %%i:\Users\usuario\Desktop\Gless-Booster\Batch\Tools set GUIPPEPath=%%i:\Users\usuario\Desktop\Gless-Booster\Batch\Tools
+mode 70,22
+echo.
+echo.
 date /t
-
 echo Computador: %computername%        Usuario: %username%
 
 Title Ferramenta de Suporte do Windows by @Glestman
-                   
+
+echo  ==================================                   
 echo            MENU TAREFAS
 echo  ==================================
+echo.
 echo * 1. Otimizacao do Sistema            
 echo * 2. Encerramento mais rapido                            
 echo * 3. Reset Spool Impressora           
@@ -27,11 +37,9 @@ echo * 5. Desinstalar atualizacoes do Windows Update
 echo * 6. Desativar Windows Update 
 echo * 7. Otimizacao Taxa de Transferencia      
 echo * 8. Modo  Desempenho Maximo Plano de Energia 
-echo * 9. Limpar Arquivos Temporarios
-       
-
+echo * 9. Limpar Arquivos Temporrios
+echo.
 echo  ==================================
-
 set /p opcao= Escolha uma opcao: 
 echo ------------------------------
 if %opcao% equ 1 goto opcao1
@@ -268,7 +276,7 @@ goto menu
 :opcao8
 cls
 mode 90,6
-for /f "tokens=1,2 delims=:()" %%i in ('powercfg -list ^| find "(Desempenho M�ximo)"') do set GUIDPlan=%%j
+for /f "tokens=1,2 delims=:()" %%i in ('powercfg -list ^| find "(Desempenho Máximo)"') do set GUIDPlan=%%j
 if "%GUIDPlan%"=="" goto ImportUPEnergy
 set GUIDPlan=%GUIDPlan: =%
 powercfg -setactive %GUIDPlan%
@@ -277,13 +285,13 @@ goto SkipUPEnergy
 :ImportUPEnergy
 powercfg -import "%GUIPPEPath%\UltimatePerformance.pow"
 timeout 2 >nul
-for /f "tokens=1,2 delims=:()" %%i in ('powercfg -list ^| find "(Desempenho M�ximo)"') do set NewGUIDPlan=%%j
+for /f "tokens=1,2 delims=:()" %%i in ('powercfg -list ^| find "(Desempenho Máximo)"') do set NewGUIDPlan=%%j
 set NewGUIDPlan=%NewGUIDPlan: =%
 powercfg -setactive %NewGUIDPlan%
 
 :SkipUPEnergy
 echo ==================================
-echo *     Ativado Modo ALto Desempenho Bateria        *
+echo *     Ativado Modo Alto Desempenho Bateria        *
 echo ==================================
 pause
 goto menu
