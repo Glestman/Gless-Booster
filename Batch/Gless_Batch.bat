@@ -304,3 +304,22 @@ echo *     Removido Arquivos Temporarios        *
 echo ==================================
 pause
 goto menu
+
+:ElevParaAdmin
+echo Set UAC = CreateObject^("Shell.Application"^) >"%temp%\getadmin.vbs"
+echo UAC.ShellExecute "%~s0", "", "", "runas", 1 >>"%temp%\getadmin.vbs"
+"%temp%\getadmin.vbs"
+goto Admin & exit /b
+
+:Admin
+if exist "%temp%\getadmin.vbs" (del "%temp%\getadmin.vbs") & pushd "%CD%" & cd /d "%~dp0" & exit
+
+:VerPrevAdmin
+fsutil dirty query %systemdrive% >nul
+if not errorLevel 1 (
+ mode 70,5
+ ) else (
+   goto :ElevParaAdmin & echo. & set "Admin=ops"
+)
+goto :eof
+
